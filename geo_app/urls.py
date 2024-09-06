@@ -1,17 +1,21 @@
 # API routes realization here
 from aiohttp import web
-import views
+from .views import (
+    get_cities, get_city,
+    add_city, update_city,
+    delete_city, get_nearest_cities
+)
 
 
 # the endpoints every client will use
 routes = [
     # reading requests
-    web.get('/cities', views.get_cities),
-    web.get('/cities/{id}/', views.get_city),
-    web.get('/nearest-cities/{name}'),
+    web.get('/cities', get_cities),
+    web.get('/cities/{id}/', get_city),
+    web.get('/nearest-cities/{name}', get_nearest_cities),
 
     # modification requests
-    web.post('/cities', views.add_city),
-    web.patch('/cities/{id}/'),
-    web.delete('/cities/{id}/'),
+    web.post('/cities', add_city),
+    web.patch('/cities/{id}/', update_city),
+    web.delete('/cities/{id}/', delete_city),
 ]
