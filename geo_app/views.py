@@ -5,8 +5,6 @@ from json import dumps
 from typing import Coroutine
 from dotenv import load_dotenv
 from aiohttp.web import json_response, Response
-from geo_app.validation import CityInterface
-from geo_app.db.models import City
 from geo_app import geo_client
 from geo_app.db.transactions import (
                             add_row, update_row, delete_row,
