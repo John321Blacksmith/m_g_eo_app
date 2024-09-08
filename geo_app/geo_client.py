@@ -1,10 +1,10 @@
 # http client sends requests to an external source
 import asyncio
-from typing import List
+from typing import Coroutine, List
 from aiohttp import ClientSession, ClientResponse
 
 
-async def fetch_city(**query) -> ClientResponse:
+async def fetch_city(**query) -> Coroutine[ClientResponse]:
     """
     Get a list of geographical objects
     from the WEB.
