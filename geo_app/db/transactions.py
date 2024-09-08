@@ -1,6 +1,6 @@
 from typing import Coroutine
 from pathlib import Path
-from sqlalchemy import Engine
+from sqlalchemy import CursorResult, Engine, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy import (select, insert, update, delete)
 from sqlalchemy import Engine, create_engine
@@ -21,7 +21,7 @@ def setup_engine() -> Engine:
     return create_engine("sqlite+pysqlite:///cities1.db", echo=True)
 
 
-def create_table():
+def create_table() -> Coroutine:
     """
     Create a table scheme for
     the first time.
@@ -30,7 +30,7 @@ def create_table():
     CityBase.metadata.create_all(engine)
     
 
-async def add_row(**params):
+async def add_row(**params) -> Coroutine:
     """
     Create a new city object
     in the db.
@@ -52,7 +52,7 @@ async def add_row(**params):
             return None
 
 
-async def get_row(**params) -> City:
+async def get_row(**params) -> Coroutine[Tuple[City]]:
     """
     Retrieve a db row via index.
     """
@@ -63,7 +63,7 @@ async def get_row(**params) -> City:
         return result if result else None
 
 
-async def update_row(**params):
+async def update_row(**params) -> Coroutine[CursorResult]:
     """
     Set new data to an existing row.
     """
@@ -74,7 +74,7 @@ async def update_row(**params):
         return result if result else None
 
 
-async def delete_row(**params):
+async def delete_row(**params) -> Coroutine[CursorResult]:
     """
     Permanently delete a row
     from the database.
@@ -86,7 +86,7 @@ async def delete_row(**params):
         return result if result else None
     
 
-async def get_nearby_rows(**params):
+async def get_nearby_rows(**params) -> Coroutine:
     """
     Retrive two nearest cities
     from the database.
