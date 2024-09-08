@@ -1,8 +1,9 @@
 # requests handling is done here
 from os import getenv
 from pathlib import Path
+from json import dumps
+from typing import Coroutine
 from dotenv import load_dotenv
-
 from aiohttp.web import json_response, Response
 from geo_app.validation import CityInterface
 from geo_app.db.models import City
@@ -19,7 +20,7 @@ env_path = BASE_DIR/'.env'
 load_dotenv(dotenv_path=env_path)
 
 
-async def add_city(request) -> Response[CityInterface]:
+async def add_city(request) -> Coroutine[Response]:
     """
     Fetch a city object from
     the external API and add
@@ -53,7 +54,11 @@ async def add_city(request) -> Response[CityInterface]:
         # perform dumping to the db
         new_record = await add_row(**result)
         if new_record:
-            return json_response(data={'message': 'Success', 'result': result}, status=201)
+            return json_response(
+                            data={
+                                'message': 'Success',
+                                'result': dumps(result, ensure_ascii=False)
+                            }, status=201)
         
     return json_response(
                         data={
@@ -62,7 +67,7 @@ async def add_city(request) -> Response[CityInterface]:
                         }, status=404)
 
 # Cruds
-async def get_city(request) -> Response:
+async def get_city(request) -> Coroutine[Response]:
     """
     Return a city object from
     the database via its index.
@@ -79,7 +84,7 @@ async def get_city(request) -> Response:
     return json_response(data={'message':'City was not found'}, status=404)
 
 
-async def delete_city(request) -> Response:
+async def delete_city(request) -> Coroutine[Response]:
     """
     Delete the city object from the
     database via its index.
@@ -91,7 +96,7 @@ async def delete_city(request) -> Response:
     return json_response(body={'message': 'No such city found'}, status=404)
 
 
-async def update_city(request) -> Response:
+async def update_city(request) -> Coroutine[Response]:
     """
     Modify fields of the
     city object.
@@ -108,7 +113,7 @@ async def update_city(request) -> Response:
     return json_response(body={'message': 'Incorrect fields were provided'}, status=400)
     
 
-async def get_nearest_cities(request) -> Response[dict]:
+async def get_nearest_cities(request) -> Coroutine[Response]:
     """
     Receive a name of city object
     and return the two nearest
