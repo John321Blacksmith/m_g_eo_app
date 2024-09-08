@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    command: python main.py run-app
+    volumes:
+    - ./:/home/app/webapp
+    ports:
+      - 8000:8080
+    env_file:
+      - .env
