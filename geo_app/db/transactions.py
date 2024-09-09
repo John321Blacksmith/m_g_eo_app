@@ -62,8 +62,10 @@ async def get_row(**params):
     with Session(bind=engine) as session:
         if params['id']:
             result = session.execute(select(City).where(City.id == params['id'])).first()
-        if params['name']:
+        elif params['name']:
             result = session.execute(select(City).where(City.name == params['name'])).first()
+        else:
+            pass
         return result if result else None
 
 
