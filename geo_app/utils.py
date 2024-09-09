@@ -1,8 +1,8 @@
 import math
-
+ 
 # in order to calculate
 # distance between two cities,
-# I used the Euqlidean distance formula
+# I used the Euclidean distance formula
 distance = lambda p, s_p: math.sqrt(
     (p._values_impl()[0].latitude - s_p._values_impl()[0].latitude)**2 + \
     (p._values_impl()[0].longitude - s_p._values_impl()[0].longitude)**2
