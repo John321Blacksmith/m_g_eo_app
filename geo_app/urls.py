@@ -11,7 +11,7 @@ from .views import (
 routes = [
     # reading requests
     web.get('/cities/{id}/', get_city),
-    web.get('/nearest-cities/{name}', get_nearest_cities), # postGis
+    web.get('/nearest-cities/{city_name}', get_nearest_cities), # postGis
 
     # modification requests
     web.post('/add-city/{city_name}', add_city),
