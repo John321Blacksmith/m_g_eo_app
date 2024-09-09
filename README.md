@@ -30,6 +30,16 @@
 API_KEY = 'your API here'
 ```
 
+Организуем виртуальную среду, подгружаем необходимые
+зависимости и активируем:
+```
+python -m venv .venv
+
+pip install -r requirements.txt
+
+.venv\Scripts\activate
+```
+
 Перед выполнением БД-транзакций, необходимо
 создать схему таблицы:
 
@@ -42,7 +52,7 @@ python main.py makemigrations create-table
 Затем, инициализировать образ:
 
 ```
-docker-compose build -d
+docker-compose build
 ```
 
 И запустить контейнер:
