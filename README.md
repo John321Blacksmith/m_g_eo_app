@@ -58,7 +58,11 @@ docker-compose build
 И запустить контейнер:
 
 ```
+# контейнер в фоновом режиме
 docker-compose up -d
+
+# запуск с логами
+docker-compose up
 ```
 
 Перед выполнением запрсов модифицации
@@ -82,47 +86,40 @@ http://localhost:8000/delete-city/<id:int>/  --> DELETE
 1) Добавление, изменение и удаление города из базы данных;
 
 Creation:
-
 ```
 curl --request POST http://localhost:8000/add-city/Rome
-{"message": "Success", "result": {"name": "Rome", "latitude": "41.8933203", "longitude": "12.4829321"}}
+{"message": "Success", "new_city_id": 1}
 ```
 
 Deletion:
-
 ```
 curl --request DELETE http://localhost:8000/delete-city/1/
 {'message': 'City has been deleted'}
 ```
 
 Update
-
 ```
-curl --request PATCH  "http://localhost:8080/update-city/34/" -d "{\"name\": \"FOOOBAAAR\"}"
+curl --request PATCH  "http://localhost:8000/update-city/34/" -d "{\"name\": \"FOOOBAAAR\"}"
 {"message": "City data was changed"}
 ```
 
 2) Запрос сущности города из базы данных;
-
 ```
 curl --request GET http://localhost:8000/cities/1/
-{"name": "Rome", "latitude": "41.8933203", "longitude": "12.4829321"}
+{"name": "FOOOBAAAR", "latitude": 41.8933203, "longitude": 12.4829321}
 ```
-
 
 3) Получение списка двух ближайших городов к определённоиу городу.
 
 Пример 1.
-
 ```
 curl --request GET http://localhost:8000/nearest-cities/Пекин
 {"result": [{"name": "Пекин", "latitude": 39.9057136, "longitude": 116.3912972}, {"name": "Vladivostok", "latitude": 43.1150678, "longitude": 131.8855768}]}
 ```
 
 Пример 2.
-
 ```
-curl --request GET http://localhost:8080/nearest-cities/Кемерово
+curl --request GET http://localhost:8000/nearest-cities/Кемерово
 {"result": [{"name": "MOSCOW", "latitude": 40.0, "longitude": 37.6174782}]}
 ```
 
