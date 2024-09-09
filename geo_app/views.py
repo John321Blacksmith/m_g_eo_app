@@ -1,14 +1,14 @@
 # requests handling is done here
 from os import getenv
+import math
 from pathlib import Path
-from json import dumps
-from typing import Coroutine
+from json import JSONEncoder
 from dotenv import load_dotenv
 from aiohttp.web import json_response, Response
 from geo_app import geo_client
 from geo_app.db.transactions import (
                             add_row, update_row, delete_row,
-                            get_nearby_rows, get_row
+                            get_nearest_rows, get_row
                         )
 
 
@@ -18,7 +18,7 @@ env_path = BASE_DIR/'.env'
 load_dotenv(dotenv_path=env_path)
 
 
-async def add_city(request) -> Coroutine[Response]:
+async def add_city(request) -> Response:
     """
     Fetch a city object from
     the external API and add
@@ -50,12 +50,12 @@ async def add_city(request) -> Coroutine[Response]:
     # database if it does not exist there yet
     if result:
         # perform dumping to the db
-        new_record = await add_row(**result)
-        if new_record:
+        row_id = await add_row(**result)
+        if row_id:
             return json_response(
                             data={
                                 'message': 'Success',
-                                'result': dumps(result, ensure_ascii=False)
+                                'new_city_id': row_id
                             }, status=201)
         
     return json_response(
@@ -65,7 +65,7 @@ async def add_city(request) -> Coroutine[Response]:
                         }, status=404)
 
 # Cruds
-async def get_city(request) -> Coroutine[Response]:
+async def get_city(request) -> Response:
     """
     Return a city object from
     the database via its index.
@@ -82,19 +82,19 @@ async def get_city(request) -> Coroutine[Response]:
     return json_response(data={'message':'City was not found'}, status=404)
 
 
-async def delete_city(request) -> Coroutine[Response]:
+async def delete_city(request) -> Response:
     """
     Delete the city object from the
     database via its index.
     """
-    obj = await delete_row(id=request.match_info['id'])
+    result = await delete_row(id=request.match_info['id'])
     
-    if obj.rowcount == 1:
+    if result:
         return json_response(data={'message': 'City has been deleted'}, status=204)
     return json_response(body={'message': 'No such city found'}, status=404)
 
 
-async def update_city(request) -> Coroutine[Response]:
+async def update_city(request) -> Response:
     """
     Modify fields of the
     city object.
@@ -111,10 +111,21 @@ async def update_city(request) -> Coroutine[Response]:
     return json_response(body={'message': 'Incorrect fields were provided'}, status=400)
     
 
-async def get_nearest_cities(request) -> Coroutine[Response]:
+async def get_nearest_cities(request) -> Response:
     """
     Receive a name of city object
     and return the two nearest
     cities from the database.
     """
-    return json_response()
+    
+    result = await get_nearest_rows(name=request.match_info['city_name'])
+
+    return json_response(data={
+                                'result': [
+                                        {
+                                            'name': obj[0].name,
+                                            'latitude': obj[0].latitude,
+                                            'longitude': obj[0].longitude
+                                        } for obj in result
+                                    ]
+                                }, status=200)
