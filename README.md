@@ -20,6 +20,8 @@ Task:
 создать схему таблицы:
 '''python main.py makemigrations create-table'''
 
+Убедитесь, Docker-машина запущена.
+
 Затем, инициализировать образ:
 '''docker-compose build -d'''
 
