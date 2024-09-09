@@ -99,7 +99,7 @@ curl --request DELETE http://localhost:8000/delete-city/1/
 
 Update
 ```
-curl --request PATCH  "http://localhost:8000/update-city/34/" -d "{\"name\": \"FOOOBAAAR\"}"
+curl --request PATCH  "http://localhost:8000/update-city/1/" -d "{\"name\": \"FOOOBAAAR\"}"
 {"message": "City data was changed"}
 ```
 
