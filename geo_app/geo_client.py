@@ -4,7 +4,7 @@ from typing import Coroutine, List
 from aiohttp import ClientSession, ClientResponse
 
 
-async def fetch_city(**query) -> Coroutine[ClientResponse]:
+async def fetch_city(**query) -> ClientResponse:
     """
     Get a list of geographical objects
     from the WEB.
