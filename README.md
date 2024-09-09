@@ -91,16 +91,16 @@ curl --request POST http://localhost:8000/add-city/Rome
 {"message": "Success", "new_city_id": 1}
 ```
 
+Update:
+```
+curl --request PATCH  "http://localhost:8000/update-city/1/" -d "{\"name\": \"FOOOBAAAR\"}"
+{"message": "City data was changed"}
+```
+
 Deletion:
 ```
 curl --request DELETE http://localhost:8000/delete-city/1/
 {'message': 'City has been deleted'}
-```
-
-Update
-```
-curl --request PATCH  "http://localhost:8000/update-city/1/" -d "{\"name\": \"FOOOBAAAR\"}"
-{"message": "City data was changed"}
 ```
 
 2) Запрос сущности города из базы данных;
