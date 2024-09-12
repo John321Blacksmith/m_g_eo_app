@@ -86,40 +86,70 @@ http://localhost:8000/delete-city/<id:int>/  --> DELETE
 1) Добавление, изменение и удаление города из базы данных;
 
 Creation:
+Для лучшего сравнения, необходимо добавить как можно
+больше городов:
 ```
-curl --request POST http://localhost:8000/add-city/Rome
-{"message": "Success", "new_city_id": 1}
+curl --request POST http://localhost:8000/add-city/Moscow
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Lyubertsy
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Balashikha
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Mytishchi
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Ryazan
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Kazan
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Vladimir
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/Chelyabinsk
+{"message": "City has been created"}
+
+curl --request POST http://localhost:8000/add-city/New-York
+{"message": "City has been created"}
 ```
 
 Update:
 ```
-curl --request PATCH  "http://localhost:8000/update-city/1/" -d "{\"name\": \"FOOOBAAAR\"}"
+curl --request PATCH  "http://localhost:8000/update-city/1/" -d "{\"name\": \"MOSCOW\"}"
 {"message": "City data was changed"}
 ```
 
 Deletion:
 ```
-curl --request DELETE http://localhost:8000/delete-city/1/
+curl --request DELETE http://localhost:8000/delete-city/8/
 {'message': 'City has been deleted'}
 ```
 
 2) Запрос сущности города из базы данных;
 ```
 curl --request GET http://localhost:8000/cities/1/
-{"name": "FOOOBAAAR", "latitude": 41.8933203, "longitude": 12.4829321}
+{"name": "MOSCOW", "latitude": 55.7505412, "longitude": 37.6174782}
 ```
 
 3) Получение списка двух ближайших городов к определённоиу городу.
 
 Пример 1.
 ```
-curl --request GET http://localhost:8000/nearest-cities/Пекин
-{"result": [{"name": "Пекин", "latitude": 39.9057136, "longitude": 116.3912972}, {"name": "Vladivostok", "latitude": 43.1150678, "longitude": 131.8855768}]}
+curl --request GET http://localhost:8000/nearest-cities/MOSCOW
+{"results": [{"name": "Mytishchi", "latitude": 55.9094928, "longitude": 37.7339358}, {"name": "Lyubertsy", "latitude": 55.6783142, "longitude": 37.89377}]}
 ```
 
 Пример 2.
 ```
-curl --request GET http://localhost:8000/nearest-cities/Кемерово
-{"result": [{"name": "MOSCOW", "latitude": 40.0, "longitude": 37.6174782}]}
+curl --request GET http://localhost:8000/nearest-cities/Vladimir
+{"results": [{"name": "Ryazan", "latitude": 54.6295687, "longitude": 39.7425039}, {"name": "Balashikha", "latitude": 55.7997662, "longitude": 37.9373707}]}
+
+Пример 3.
+curl --request GET http://localhost:8080/nearest-cities/Kazan
+{"results": [{"name": "Vladimir", "latitude": 56.1288899, "longitude": 40.4075203}, {"name": "Ryazan", "latitude": 54.6295687, "longitude": 39.7425039}]}
 ```
 
