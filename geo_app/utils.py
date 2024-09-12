@@ -1,11 +1,12 @@
 import math
+import configparser
  
 # in order to calculate
 # distance between two cities,
 # I used the Euclidean distance formula
 distance = lambda p, s_p: math.sqrt(
-    (p._values_impl()[0].latitude - s_p._values_impl()[0].latitude)**2 + \
-    (p._values_impl()[0].longitude - s_p._values_impl()[0].longitude)**2
+    (p._mapping['latitude'] - s_p._mapping['latitude'])**2 + \
+    (p._mapping['longitude'] - s_p._mapping['longitude'])**2
     ) if p and s_p else 0
 
 
@@ -21,3 +22,6 @@ def sort_dists(dists: list[tuple]):
             greater_dists = [dists[i] for i in range(len(dists)) if dists[i][1] > pivot[1]]
 
             return sort_dists(smaller_dists) + [pivot] + sort_dists(greater_dists)
+
+
+def get_env_vars() -> dict[str, str]:...
