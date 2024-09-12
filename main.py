@@ -1,7 +1,8 @@
 import sys
 import asyncio
 from aiohttp import web
-from geo_app.db.transactions import create_table
+from sqlalchemy import create_engine
+from geo_app.db.models import CityBase
 from geo_app.urls import routes
 
 
@@ -21,7 +22,13 @@ def make_migrations() -> None:
     Perform database migrations.
     """
     if sys.argv[2] == 'create-table':
-        create_table()
+        """
+        Create a table scheme for
+        the first time.
+        """
+        engine = create_engine(f'sqlite+pysqlite:///{sys.argv[3]}.db')
+        CityBase.metadata.create_all(engine)
+        print(f'DB \'{sys.argv[3]}\' was initialized!')
 
 
 def perform_commands() -> None:
