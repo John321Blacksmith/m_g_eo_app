@@ -1,23 +1,13 @@
 # API routes realization here
 from os import getenv
-from pathlib import Path
-from dotenv import load_dotenv
 from aiohttp import web
 from .views import RequestManager
+from .utils import get_env_vars
 
-BASE_DIR = Path(__file__).resolve().parent
-load_dotenv()
-env_path = BASE_DIR/'.env'
-load_dotenv(dotenv_path=env_path)
+# exract neccessary configs
+configs = get_env_vars()
 
-
-configs = {
-    'api': getenv('API_KEY'),
-    'db_configs': {
-        'url': getenv('SQLITE_PATH')
-    }
-}
-
+# realize an http-manager
 r_manager = RequestManager(**configs)
 
 # the endpoints every client will use

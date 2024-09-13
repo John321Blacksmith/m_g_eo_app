@@ -1,6 +1,5 @@
 # http client sends requests to an external source
-import asyncio
-from typing import Coroutine, List
+
 from aiohttp import ClientSession, ClientResponse
 
 

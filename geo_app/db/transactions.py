@@ -1,17 +1,8 @@
-from pathlib import Path
-from sqlalchemy import create_engine, Engine, text
-from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy import (select, insert, update, delete)
-from .models import CityBase, City
-from dotenv import load_dotenv
+from .models import City
 from ..utils import sort_dists, distance
-
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-load_dotenv()
-env_path = BASE_DIR/'.env'
-load_dotenv(dotenv_path=env_path)
     
 
 class DBManager:
