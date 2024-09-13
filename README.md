@@ -25,9 +25,20 @@
 городов, необходимо получить API-ключ на https://geocode.maps.co
 
 В созданном в основной директории
-файле **.env** указать ключ
+файле **.env** указать ключ и
+конфигурации продакшена или локального
+хранилища:
 ```
 API_KEY = 'your API here'
+
+PROD='dactive'
+
+DB_NAME = '<db_name>'
+USER = 'admin'
+PASSWORD = '<password>'
+PORT='<db_port>'
+
+SQLITE_PATH = 'sqlite+pysqlite:///<db_name: str>.db'
 ```
 
 Организуем виртуальную среду, подгружаем необходимые
@@ -44,7 +55,7 @@ pip install -r requirements.txt
 создать схему таблицы:
 
 ```
-python main.py makemigrations create-table
+python main.py makemigrations create-table sqlite+pysqlite cities
 ```
 
 Убедитесь, Docker-машина запущена.
