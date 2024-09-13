@@ -1,5 +1,4 @@
 import math
-import configparser
  
 # in order to calculate
 # distance between two cities,
@@ -24,4 +23,25 @@ def sort_dists(dists: list[tuple]):
             return sort_dists(smaller_dists) + [pivot] + sort_dists(greater_dists)
 
 
-def get_env_vars() -> dict[str, str]:...
+def get_env_vars() -> dict[str, str | dict[str, str]]:
+    """
+    Load environmental vars at
+    a runtime.
+    """
+    from os import getenv
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
+    db_configs: dict
+    if getenv('PROD') == 'active':
+         db_configs = {
+              'DB_NAME': getenv('DB_NAME'),
+              'USERNAME': getenv('USERNAME'),
+              'PASSWORD': getenv('PASSWORD'),
+              'PORT': getenv('PORT')
+              }
+    else:
+        db_configs = {'url': getenv('SQLITE_PATH')}
+
+    return {'api': getenv('API_KEY'), 'db_configs': db_configs}
