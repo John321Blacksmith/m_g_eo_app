@@ -1,4 +1,6 @@
-
+# Description
+This microservise facilitates the client to interact with the city objects
+so the client can fetch, add and update cities.
 <div align="center">
 <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />
 <img src="https://img.shields.io/badge/aiohttp-9999FF.svg?style=for-the-badge&logo=aiohttp&logoColor=white" />
