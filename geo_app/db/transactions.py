@@ -1,9 +1,12 @@
-from sqlalchemy import create_engine
+from functools import wraps
+from typing import Callable, Any
+from sqlalchemy import Connection, create_engine, Engine
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy import (select, insert, update, delete)
 from .models import City
 from ..utils import sort_dists, distance
-    
+
+
 
 class DBManager:
     """
@@ -15,75 +18,45 @@ class DBManager:
         self.url = url
         self.engine = create_engine(self.url) # the engine remains up the server's life
     
-    async def get_row(self, **params) -> dict[str, int|float] | None:
+    def transaction(funct):
         """
-        Retrieve a db row via index or name.
+        Take a query transaction and
+        return a corresponding queryset.
         """
-        result: dict[str, int|float] | None = None
-        if self.engine:
-            with self.engine.connect() as connection:
+        @wraps(funct)
+        async def wrapper(self, *args, **kwargs):
+            with self.engine.connect() as conn:
+                query = await funct(self, *args, **kwargs)
                 try:
-                    queryset = connection.execute(select(City).where(City.id == params['id']))
-                    result = queryset.one()._mapping
-                except NoResultFound:
+                    queryset = conn.execute(query)
+                except (NoResultFound, IntegrityError):
+                    conn.rollback()
                     return None
-        return result
+                if query.__class__.__name__ in ['Insert', 'Update', 'Delete']:
+                    conn.commit()
+                return queryset
+        return wrapper
     
-    async def insert_row(self, **params) -> int | None:
-        """
-        Create a new city object
-        in the db.
-        """
-        result: int | None = None
-        if self.engine:
-            with self.engine.connect() as connection:
-                if 'No Data' not in params.values():
-                    try:
-                        result = connection.execute(insert(City).values(**params))
-                    except IntegrityError as exc:
-                        print(exc.args)
-                        connection.rollback()
-                
-                    connection.commit()
-                    return result.rowcount
-        return result
+    @transaction
+    async def get_row(self, **params):
+        """Selection query"""
+        return select(City).where(City.id == params['id'])
     
-    async def update_row(self, **params) -> int | None:
-        """
-        Set new data to an existing row.
-        """
-        result: int | None = None
-        if self.engine:
-            with self.engine.connect() as connection:
-                try:
-                    result = connection.execute(update(City)
-                                                .where(City.id == params['id'])
-                                                .values(**params['body']))
-                except IntegrityError as exc:
-                    print(exc.args)
-                    connection.rollback()
-                
-                connection.commit()
-                return result.rowcount
-        return result
-                
-    async def delete_row(self, **params) -> int | None:
-        """
-        Permanently delete a row
-        from the database.
-        """
-        result: int | None = None
-        if self.engine:
-            with self.engine.connect() as connection:
-                try:
-                    result = connection.execute(delete(City).where(City.id == params['id']))
-                except IntegrityError as exc:
-                    print(exc.args)
-                    connection.rollback()
-                connection.commit()
-                return result.rowcount
-        return result
+    @transaction
+    async def insert_row(self, **params):
+        """Insertion query"""
+        return insert(City).values(**params)
+
+    @transaction
+    async def update_row(self, **params):
+        """Update query"""
+        return update(City).where(City.id == params['id']).values(**params['body'])
     
+    @transaction
+    async def delete_row(self, **params):
+        """Deletion query"""
+        return delete(City).where(City.id == params['id'])
+
     async def get_nearest_rows(self, **params) -> list[City] | None:
         """
         Retrive a current obj and a list
