@@ -1,5 +1,6 @@
 # requests handling is done here
 from aiohttp.web import json_response, Response
+from sqlalchemy.exc import NoResultFound
 from geo_app import geo_client
 from geo_app.db.transactions import DBManager
 
@@ -17,20 +18,25 @@ class RequestManager:
                                     self.db_configs['url']
                                 ) if self.db_configs else None
         
-    async def get_city(self, request) -> Response:
+    async def get_city(self, request, *args, **kwargs) -> Response:
         """
         Return a city object from
         the database via its index.
         """
-        obj = await self.db_manager.get_row(id=request.match_info['id'])
-        if obj:
+        queryset = await self.db_manager.get_row(id=request.match_info['id'], *args, **kwargs)
+        if queryset:
+            try:
+                obj = queryset.one()._mapping
+            except NoResultFound:
+                return json_response(data={'message':'City was not found'}, status=404)
+            
             return json_response(
                 data={
                     'name': obj['name'],
                     'latitude': obj['latitude'],
                     'longitude': obj['longitude']
                 }, status=200)
-        return json_response(data={'message':'City was not found'}, status=404)
+        
 
     async def add_city(self, request) -> Response:
         """
@@ -65,7 +71,7 @@ class RequestManager:
         if result:
             # perform dumping to the db
             flag = await self.db_manager.insert_row(**result)
-            if flag:
+            if flag.rowcount:
                 return json_response(
                                 data={
                                     'message': 'City has been created',
@@ -84,9 +90,9 @@ class RequestManager:
         """
         flag = await self.db_manager.delete_row(id=request.match_info['id'])
     
-        if flag == 1:
+        if flag.rowcount == 1:
             return json_response(data={'message': 'City has been deleted'}, status=204)
-        return json_response(body={'message': 'No such city found'}, status=404)
+        return json_response(data={'message': 'No such city found'}, status=404)
 
 
     async def update_city(self, request) -> Response:
@@ -100,10 +106,10 @@ class RequestManager:
    
         if body:
             flag = await self.db_manager.update_row(id=obj_id, body=fields)
-            if flag == 1:
+            if flag.rowcount == 1:
                 return json_response(data={'message': 'City data was changed'}, status=201)
-            return json_response(body={'message': 'No such city found'}, status=404)
-        return json_response(body={'message': 'Incorrect fields were provided'}, status=400)
+            return json_response(data={'message': 'No such city found'}, status=404)
+        return json_response(data={'message': 'Incorrect fields were provided'}, status=400)
     
 
     async def get_nearest_cities(self, request) -> Response:
